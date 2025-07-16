@@ -38,6 +38,7 @@ export type NetworkerServer = typeof(setmetatable(
 		instance: Instance?,
 		instanceConn: RBXScriptConnection?,
 		recipients: { Player }?,
+		_accessLookup: { [string]: { module: any, method: (...any?) -> ...any? } },
 	},
 	NetworkerServer
 ))
@@ -54,6 +55,7 @@ function NetworkerServer.new(networkTag: NetworkTag, module: {}?, clientAccess: 
 
 	local self = setmetatable({
 		networkTag = networkTag,
+		_accessLookup = {},
 	}, NetworkerServer)
 
 	local remotes = Instance.new("Folder")
@@ -87,32 +89,49 @@ function NetworkerServer.new(networkTag: NetworkTag, module: {}?, clientAccess: 
 	assert(RemoteContainter:FindFirstChild(remotes.Name) == nil, "NetworkerServer with the same name already exists")
 	remotes.Parent = RemoteContainter
 
-	if not clientAccess then
-		return self
+	if clientAccess then
+		assert(module, "Module must be provided if clientAccess is specified")
+		self:addClientAccess(module, clientAccess)
 	end
 
-	assert(module, "Module must be provided when clientAccess is set")
-
-	local function callback(player: Player, method: string, ...: any?): any?
-		local moduleFunc = module[method]
-
-		if not moduleFunc then
-			warn("Method " .. method .. " does not exist on module", networkTag)
+	local function callback(player: Player, method: string, ...: any?): ...any?
+		local access = self._accessLookup[method]
+		if not access then
+			warn(method .. " does not exist or is restricted for ", networkTag)
 			return
 		end
 
-		if not table.find(clientAccess, moduleFunc) then
-			warn(player.Name .. " attempted to call restricted method " .. method .. " on service", networkTag)
-			return
-		end
-
-		return moduleFunc(module, player, ...)
+		return access.method(access.module, player, ...)
 	end
 
 	event.OnServerEvent:Connect(callback)
 	func.OnServerInvoke = callback
 
 	return self
+end
+
+--[=[
+	Adds a client access method(s) to the NetworkerServer
+	@param module any -- The class or service the client will be communicating with  
+	@param methods ClientAccess -- The methods that the client is allowed to call
+	@return ()  
+]=]
+function NetworkerServer.addClientAccess(self: NetworkerServer, module: any, methods: { any }): ()
+	for _, method in methods do
+		for funcName, func in module do
+			if func ~= method then
+				continue
+			end
+
+			assert(self._accessLookup[funcName] == nil, "Client access method already exists: " .. funcName)
+			assert(type(func) == "function", "Client access method must be a function: " .. funcName)
+
+			self._accessLookup[funcName] = {
+				module = module,
+				method = method,
+			}
+		end
+	end
 end
 
 --[=[

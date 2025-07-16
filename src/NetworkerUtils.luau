@@ -2,7 +2,7 @@
 	@type ClientAccess { (any) -> any }  
 	@within NetworkerServer  
 ]=]
-export type ClientAccess = { (...any) -> any }
+export type ClientAccess = { (...any?) -> ...any? }
 
 --[=[
 	@type NetworkTag string | Instance  
