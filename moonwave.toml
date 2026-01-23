@@ -1,0 +1,27 @@
+gitSourceBranch = "main"
+
+[[navbar.items]]
+href = "https://discord.com/invite/r3rVDatP7x"
+label = "Discord"
+position = "right"
+
+[[navbar.items]]
+href = "https://wally.run/package/leifstout/networker"
+label = "Wally"
+position = "right"
+
+[home]
+enabled = true
+includeReadme = false
+
+[[home.features]]
+title = "Ease of Use"
+description = "Networker abstracts RemoteEvents and RemoteFunctions behind a clean, method-based API."
+
+[[home.features]]
+title = "Selective Replication"
+description = "Messages can be sent to players based on many different conditions."
+
+[[home.features]]
+title = "Battle Tested"
+description = "Used in projects with 10M+ visits and 200K+ MAU"

@@ -11,6 +11,7 @@ type RemotesContainer = NetworkerUtils.RemotesContainer
 --[=[
 	NetworkerClient facilitates the communication of client-sided networking and handles server networking instructions  
 	@class NetworkerClient  
+	@client
 ]=]
 local NetworkerClient = {}
 NetworkerClient.__index = NetworkerClient
@@ -26,8 +27,8 @@ export type NetworkerClient = typeof(setmetatable(
 ))
 
 --[=[
-	Constructs a new NetworkerClient  
-	@param networkTag NetworkTag -- The unqiue tag of the networker  
+	Constructs a new NetworkerClient
+	@param networkTag NetworkTag -- The unique tag of the networker
 	@param module {} -- The class or service the networker will be communicating with  
 	@return NetworkerClient  
 ]=]
@@ -134,5 +135,7 @@ function NetworkerClient.destroy(self: NetworkerClient): ()
 		self.instanceConn:Disconnect()
 	end
 end
+
+NetworkerClient.Destroy = NetworkerClient.destroy
 
 return NetworkerClient

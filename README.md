@@ -1,9 +1,11 @@
 # Networker
-A complete replacement for RemoteEvents
+A complete replacement for RemoteEvents allowing you to modify tables and call functions on a different run context effortlessly
 
-# Server
+## Examples
 
-```luau
+### Server
+
+```lua
 local myService = {}
 
 function myService:init()
@@ -25,12 +27,12 @@ end
 return myService
 ```
 
-# Client
+### Client
 
-```luau
+```lua
 local serviceClient = {}
 
 local networker = Networker.client.new("myService", serviceClient)
-networker:fire("printTest")
+networker:fire("printTest") -- tell the server to call the printTest function
 
 ```

@@ -1,0 +1,23 @@
+# .github/workflows/publish-docs.yml
+name: publish-docs
+on:
+  push:
+    branches: ["master"]
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    name: Publish docs to GitHub Pages
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm i -g moonwave@latest
+      - name: Publish
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git config --global user.email "support+actions@github.com"
+          git config --global user.name "github-actions-bot"
+          moonwave build --publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

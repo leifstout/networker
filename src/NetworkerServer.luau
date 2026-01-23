@@ -19,6 +19,7 @@ type RemotesContainer = NetworkerUtils.RemotesContainer
 --[=[
 	NetworkerServer facilitates the communication of server-sided networking and handles client networking requests  
 	@class NetworkerServer  
+	@server
 ]=]
 local NetworkerServer = {}
 NetworkerServer.__index = NetworkerServer
@@ -301,5 +302,8 @@ function NetworkerServer.destroy(self: NetworkerServer): ()
 		self.instance = nil
 	end
 end
+
+-- Alias for :destroy()
+NetworkerServer.Destroy = NetworkerServer.destroy
 
 return NetworkerServer
